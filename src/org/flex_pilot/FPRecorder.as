@@ -161,6 +161,7 @@ package org.flex_pilot {
 			  }
 		case CalendarLayoutChangeEvent.CHANGE:
 			if(targ is DateChooser || targ is DateField){
+				trace("@ stage 1 : caught the event");
 				_this.generateAction('dateChange',targ);
 				break;
 			}
@@ -313,6 +314,7 @@ package org.flex_pilot {
 			params.value=targ.value;
 			break;
 		case 'dateChange':
+			params.value=targ.selectedDate;
 			break;
       }
       for (p in params) {
