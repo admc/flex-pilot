@@ -15,9 +15,11 @@ Copyright 2009, Matthew Eernisse (mde@fleegix.org) and Slide, Inc.
 */
 
 package org.flex_pilot.events {
+  import flash.events.*;
+  
+  import mx.events.*;
+  
   import org.flex_pilot.events.*;
-  import flash.events.*
-  import mx.events.*
 
   public class Events {
     public function Events():void {}
@@ -163,6 +165,38 @@ package org.flex_pilot.events {
           p.itemRenderer);
       obj.dispatchEvent(ev);
     }
+	
+	
+	///////////////////////**  Methods created in progress my MaSh  **//////////////////////////
+	
+	public static function  triggerSliderEvent(obj:* , type:String , ...args):void{
+		var defaults:Array=[
+			['bubbles',false],
+			['cancelable',false],
+			['thumbIndex',-1],
+			['triggerEvent',null],
+			['clickTarget',null],
+			['keyCode',-1]
+			];
+		var p:Object = Events.normalizeParams(defaults, args);
+		var ev:FPSliderEvent=new FPSliderEvent(type, p.bubbles, p.cancelable, p.thumbIndex, p.value, p.triggerEvent, p.clickTarget, p.keyCode);
+		obj.dispatchEvent(ev);
+			
+	}
+	
+	public static function triggerCalendarLayoutChangeEvent(obj:* , type:String , ...args):void{
+		var defaults:Array=[
+			['bubbles',false],
+			['cancelable',false],
+			['newDate',null],
+			['triggerEvent',null]
+		];
+		
+		var p:Object=Events.normalizeParams(defaults, args);
+		var ev:FPCalendarLayoutChangeEvent=new FPCalendarLayoutChangeEvent(type, p.bubbles, p.cancelable, p.newDate, p.triggerEvent);
+		obj.dispatchEvent(ev);
+	
+	}
   }
 }
 

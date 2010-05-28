@@ -15,12 +15,14 @@ Copyright 2009, Matthew Eernisse (mde@fleegix.org) and Slide, Inc.
 */
 
 package org.flex_pilot {
-  import org.flex_pilot.events.*;
-  import org.flex_pilot.FPLocator;
-  import flash.events.*
-  import mx.events.*
-  import flash.utils.*;
+  import flash.events.*;
   import flash.geom.Point;
+  import flash.utils.*;
+  
+  import mx.events.*;
+  
+  import org.flex_pilot.FPLocator;
+  import org.flex_pilot.events.*;
 
   public class FPController {
     public function FPController():void {}
@@ -77,6 +79,9 @@ package org.flex_pilot {
     public static function check(params:Object):void {
       return FPController.click(params);
     }
+	
+	
+	
     public static function radio(params:Object):void {
       return FPController.click(params);
     }
@@ -186,6 +191,7 @@ package org.flex_pilot {
     }
 
     public static function doubleClick(params:Object):void {
+		//trace("repeat double click");
       var obj:* = FPLocator.lookupDisplayObject(params);
       // Give it focus
       Events.triggerFocusEvent(obj, FocusEvent.FOCUS_IN);
@@ -294,6 +300,18 @@ package org.flex_pilot {
           // Do nothing
       }
     }
+	
+	public static function sliderChange(params:Object){
+		
+		trace("triggering the slider event");
+		var obj:* = FPLocator.lookupDisplayObject(params);
+		obj.value=params.params.value;
+		Events.triggerSliderEvent(obj , 'change');
+		
+		
+		
+		
+	}
     public static function getTextValue(params:Object):String {
       // Look up the item where we want to get the property
         var obj:* = FPLocator.lookupDisplayObject(params);
@@ -337,6 +355,9 @@ package org.flex_pilot {
         var coords:String = '(' + String(destCoords.x) + ',' + String(destCoords.y) + ')';
         return coords;
     }
+	
+	
+	
   }
 }
 

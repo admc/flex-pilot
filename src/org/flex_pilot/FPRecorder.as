@@ -15,21 +15,29 @@ Copyright 2009, Matthew Eernisse (mde@fleegix.org) and Slide, Inc.
 */
 
 package org.flex_pilot {
-  import org.flex_pilot.FlexPilot;
-  import org.flex_pilot.FPLogger;
-  import org.flex_pilot.FPLocator;
-  import org.flex_pilot.FPExplorer;
-  import flash.utils.*;
-  import flash.display.Stage;
   import flash.display.DisplayObject;
   import flash.display.DisplayObjectContainer;
+  import flash.display.Stage;
+  import flash.events.KeyboardEvent;
   import flash.events.MouseEvent;
   import flash.events.TextEvent;
-  import flash.events.KeyboardEvent;
-  import mx.events.ListEvent;
-  import mx.controls.ComboBox;
-  import mx.controls.List;
   import flash.external.ExternalInterface;
+  import flash.utils.*;
+  
+  import mx.controls.ComboBox;
+  import mx.controls.DateChooser;
+  import mx.controls.DateField;
+  import mx.controls.List;
+  import mx.controls.VSlider;
+  import mx.controls.sliderClasses.Slider;
+  import mx.events.CalendarLayoutChangeEvent;
+  import mx.events.ListEvent;
+  import mx.events.SliderEvent;
+  
+  import org.flex_pilot.FPExplorer;
+  import org.flex_pilot.FPLocator;
+  import org.flex_pilot.FPLogger;
+  import org.flex_pilot.FlexPilot;
 
   public class FPRecorder {
     // Remember the last event type so we know when to
@@ -42,16 +50,20 @@ package org.flex_pilot {
     // Only remembered for one second
     private static var recentTarget:Object = {
       click: null,
-      change: null
+      change: null,
+	  sliderChange: null
     };
     // Timeout id for removing the recentTarget
     private static var recentTargetTimeout:Object = {
       click: null,
-      change: null
+      change: null,
+	  sliderChange: null
     };
     // String built from a sequenece of keyDown events
     private static var keyDownString:String = '';
     private static var listItems:Array = [];
+	private static var sliderItems:Array=[];
+	private static var dateItems:Array=[];
     private static var running:Boolean = false;
 
     public function FPRecorder():void {}
@@ -64,10 +76,19 @@ package org.flex_pilot {
         // Otherwise recursively check the next link in
         // the locator chain
         var count:int = 0;
+		
         if (item is ComboBox || item is List) {
           FPRecorder.listItems.push(item);
           item.addEventListener(ListEvent.CHANGE, FPRecorder.handleEvent);
         }
+		if(item is Slider){
+			item.addEventListener(SliderEvent.CHANGE, FPRecorder.handleEvent);
+			FPRecorder.sliderItems.push(item);
+		}
+		if(item is DateChooser||item is DateField){
+			item.addEventListener(CalendarLayoutChangeEvent.CHANGE, FPRecorder.handleEvent);
+			FPRecorder.dateItems.push(item);
+		}
         if (item is DisplayObjectContainer) {
           count = item.numChildren;
         }
@@ -86,6 +107,7 @@ package org.flex_pilot {
       stage.addEventListener(MouseEvent.DOUBLE_CLICK, FPRecorder.handleEvent);
       stage.addEventListener(TextEvent.LINK, FPRecorder.handleEvent);
       stage.addEventListener(KeyboardEvent.KEY_DOWN, FPRecorder.handleEvent);
+	  
 
       FPRecorder.running = true;
     }
@@ -97,32 +119,68 @@ package org.flex_pilot {
       stage.removeEventListener(MouseEvent.DOUBLE_CLICK, FPRecorder.handleEvent);
       stage.removeEventListener(TextEvent.LINK, FPRecorder.handleEvent);
       stage.removeEventListener(KeyboardEvent.KEY_DOWN, FPRecorder.handleEvent);
+	  
+	  
       var list:Array = FPRecorder.listItems;
       for each (var item:* in list) {
         item.removeEventListener(ListEvent.CHANGE, FPRecorder.handleEvent);
       }
+	  
+	  var list:Array = FPRecorder.sliderItems;
+	  for each (var item:* in list) {
+		  item.removeEventListener(SliderEvent.CHANGE, FPRecorder.handleEvent);
+	  }
+	  
+	  var list:Array = FPRecorder.dateItems;
+	  for each (var item:* in list) {
+		  item.removeEventListener(CalendarLayoutChangeEvent.CHANGE, FPRecorder.handleEvent);
+	  }
     }
 
     private static function handleEvent(e:*):void {
+		
       var targ:* = e.target;
       var _this:* = FPRecorder;
       var chain:String = FPLocator.generateLocator(targ);
-
+		//trace(e.type);
+	  
+	  //needed further more ordered clissification below as some events may have same type :-(
       switch (e.type) {
         // Keyboard input -- append to the stored string reference
-        case KeyboardEvent.KEY_DOWN:
+		  
+		case SliderEvent.CHANGE:
+			
+			// filtered the change in slider event from the change in List Event
+			  if(targ is Slider)
+			  {
+				  //trace("slider caught at switch");
+				  _this.generateAction('sliderChange',targ);
+				  //_this.resetRecentTarget(('sliderChange' , e);
+				  
+				  break;
+			  }
+		case CalendarLayoutChangeEvent.CHANGE:
+			if(targ is DateChooser || targ is DateField){
+				_this.generateAction('dateChange',targ);
+				break;
+			}
+	    case KeyboardEvent.KEY_DOWN:
           // If we don't ignore 0 we get a translation error
           // as it generates a non unicode character
-          if (e.charCode != 0) {
+			if(e is KeyboardEvent){
+            if (e.charCode != 0) 
             _this.keyDownString += String.fromCharCode(e.charCode);
-          }
-          break;
+          
+          break;}
         // ComboBox changes
         case ListEvent.CHANGE:
+			if(targ is List || ComboBox)
+			{trace("list event");
           _this.generateAction('select', targ);
           _this.resetRecentTarget('change', e);
-          break;
+          break;}
         // Mouse/URL clicks
+		
         default:
           // If the last event was a keyDown, write out the string
           // that's been saved from the sequence of keyboard events
@@ -142,10 +200,20 @@ package org.flex_pilot {
           // in ListEvent.CHANGE events -- the list gets blown
           // away, and can't be looked up by the generated locator
           // anyway, so we have to use this event instead
-          else if (_this.lastEventType == ListEvent.CHANGE) {
-            if (_this.recentTarget.change) {
+          else
+			  if (_this.lastEventType == ListEvent.CHANGE) {
+			  
+			  //trace("this happens anyways");
+			  
+            if (_this.recentTarget.change && _this.recentTarget is List) {
               return;
             }
+			  
+			  else
+				  if(_this.recentTarget.sliderChange  && _this.recentTarget is Slider){
+					  return;
+					  
+				  }
           }
           // Avoid multiple clicks on the same target
           if (_this.recentTarget == e.target) {
@@ -187,12 +255,18 @@ package org.flex_pilot {
 
     private static function generateAction(t:String, targ:*,
         opts:Object = null):void {
+		
+		var trybool:Boolean=false;
+			
       var chain:String;
       //Type actions send an already build locator string
       if (typeof(targ) == 'object'){
           chain = FPLocator.generateLocator(targ);
+		  
       }
       else { chain = targ; }
+	  
+	  
 
       //Figure out what kind of displayObj were dealing with
       var classInfo:XML = describeType(targ);
@@ -204,6 +278,8 @@ package org.flex_pilot {
         chain: chain
       };
       var params:Object = {};
+	  trace("checkinng");
+	  trace(FPLocator.lookupDisplayObject(res) is Slider);
 
       //if we have a flex accordion
       if (objType.indexOf('Accordion') != -1){
@@ -233,16 +309,21 @@ package org.flex_pilot {
           break;
         case 'type':
           break;
+		case 'sliderChange':
+			params.value=targ.value;
+			break;
+		case 'dateChange':
+			break;
       }
       for (p in params) {
         res.params = params;
         break;
       }
       
-      var r:* = ExternalInterface.call('fp_recorderAction', res);
+	  var r:* = ExternalInterface.call('fp_recorderAction', res);
       if (!r) {
         FPLogger.log(res);
-        FPLogger.log('(FlexPilot Flash bridge not found.)');
+        //FPLogger.log('(FlexPilot Flash bridge not found.)');
       }
     }
 

@@ -99,6 +99,7 @@ package org.flex_pilot {
       var genExtFunc:Function = function (func:Function):Function {
         return function (...args):* {
           try {
+			  
             return func.apply(null, args);
           }
           catch (e:Error) {
@@ -122,6 +123,8 @@ package org.flex_pilot {
         // The exposed method is wrapped in a try/catch
         // that returns the Error obj to JS instead of throwing
         for each (methodName in packages[key].methodNames) {
+			trace('fp_' + methodName);
+			
           ExternalInterface.addCallback('fp_' + methodName,
               genExtFunc(packages[key].packageRef[methodName]));
         }
