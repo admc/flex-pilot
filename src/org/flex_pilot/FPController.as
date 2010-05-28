@@ -301,7 +301,7 @@ package org.flex_pilot {
       }
     }
 	
-	public static function sliderChange(params:Object){
+	public static function sliderChange(params:Object):void{
 		
 		trace("triggering the slider event");
 		var obj:* = FPLocator.lookupDisplayObject(params);
@@ -309,6 +309,15 @@ package org.flex_pilot {
 		Events.triggerSliderEvent(obj , 'change');
 		
 		
+		
+		
+	}
+	
+	public static function dateChange(params:Object):void{
+		
+		var obj:* = FPLocator.lookupDisplayObject(params);
+		obj.selectedDate=params.params.value;
+		Events.triggerCalendarLayoutChangeEvent(obj , 'change');
 		
 		
 	}

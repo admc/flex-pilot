@@ -65,6 +65,8 @@ package org.flex_pilot {
 	private static var sliderItems:Array=[];
 	private static var dateItems:Array=[];
     private static var running:Boolean = false;
+	
+	public static var temp:*;
 
     public function FPRecorder():void {}
 
@@ -280,7 +282,7 @@ package org.flex_pilot {
       };
       var params:Object = {};
 	  trace("checkinng");
-	  trace(FPLocator.lookupDisplayObject(res) is Slider);
+	  
 
       //if we have a flex accordion
       if (objType.indexOf('Accordion') != -1){
@@ -323,6 +325,9 @@ package org.flex_pilot {
       }
       
 	  var r:* = ExternalInterface.call('fp_recorderAction', res);
+	  
+	  
+	  
       if (!r) {
         FPLogger.log(res);
         //FPLogger.log('(FlexPilot Flash bridge not found.)');
