@@ -44,6 +44,14 @@ package org.flex_pilot {
     // output the stored string from a sequence of keyDown events
     private static var lastEventType:String;
     private static var lastEventLocator:String;
+	
+	
+	
+	//just to hide the mouse clicks occured while the user is changing the date or value of slider .
+	private static var noClickTime:Boolean=false;
+	private static var noClick:*;
+	
+	
     // Remember recent target -- used to detect double-click
     // and to throw away click events on text items that have
     // already spawned a 'link' TextEvent.
@@ -57,7 +65,8 @@ package org.flex_pilot {
     private static var recentTargetTimeout:Object = {
       click: null,
       change: null,
-	  sliderChange: null
+	  sliderChange: null,
+	  dateChange: null
     };
     // String built from a sequenece of keyDown events
     private static var keyDownString:String = '';
@@ -157,7 +166,9 @@ package org.flex_pilot {
 			  {
 				  //trace("slider caught at switch");
 				  _this.generateAction('sliderChange',targ);
+				  _this.setNoClickZone();
 				  //_this.resetRecentTarget(('sliderChange' , e);
+				  
 				  
 				  break;
 			  }
@@ -165,6 +176,7 @@ package org.flex_pilot {
 			if(targ is DateChooser || targ is DateField){
 				trace("@ stage 1 : caught the event");
 				_this.generateAction('dateChange',targ);
+				_this.setNoClickZone();
 				break;
 			}
 	    case KeyboardEvent.KEY_DOWN:
@@ -228,8 +240,10 @@ package org.flex_pilot {
           }
           var t:String = e.type == MouseEvent.DOUBLE_CLICK ?
               'doubleClick' : 'click';
+			  if(!_this.noClickTime){
           _this.generateAction(t, targ);
           _this.resetRecentTarget('click', e);
+			  }
       }
 
       // Remember the last event type for saving sequences of
@@ -255,6 +269,21 @@ package org.flex_pilot {
         _this.recentTargetTimeout[t] = null;
       }, 1);
     }
+	
+	private static function setNoClickZone():void{
+		var _this:* = FPRecorder;
+		
+		if(_this.noClick){
+			clearTimeout(_this.noClick);
+			
+		}
+		_this.noClickTime=true;
+		
+		_this.noClick=setTimeout(function():void{
+			_this.noClickTime=false;
+			
+		},0.5);
+	}
 
     private static function generateAction(t:String, targ:*,
         opts:Object = null):void {
