@@ -201,7 +201,6 @@ package org.flex_pilot {
 			if(targ is DataGrid){
 				var opts:Object=new Object;
 				opts.localX=Number(e.localX);
-				//opts.currentTarget=FPLocator.generateLocator(e.currentTarget);
 				opts.columnIndex=e.columnIndex;
 				opts.dataField=e.dataField;
 				opts.rowIndex=e.rowIndex;
@@ -212,6 +211,17 @@ package org.flex_pilot {
 			}
 		case DataGridEvent.ITEM_EDIT_END:
 			if(targ is DataGrid){
+				var opts:Object=new Object;
+				opts.newValue=e.target.itemEditorInstance[e.target.columns[e.columnIndex].editorDataField];
+				
+				opts.columnIndex=e.columnIndex;
+				opts.dataField=e.dataField;
+				opts.rowIndex=e.rowIndex;
+				//opts.itemRenderer=e.itemRenderer;
+				opts.reason=e.reason;
+				opts.cancelable=e.cancelable;
+				_this.generateAction('dgItemEditEnd', targ , opts);
+				_this.setNoClickZone();
 				break;
 			}
 	    case KeyboardEvent.KEY_DOWN:
@@ -385,6 +395,9 @@ package org.flex_pilot {
 			break;
 		case 'dgColumnStretch' :
 			break;
+		case 'dgItemEditEnd' :
+			
+			break;
       }
 	  
       for (p in params) {
@@ -393,8 +406,11 @@ package org.flex_pilot {
       
 	  }
 	  
-	  if(t=='dgColumnStretch')
-	  temp=res;
+	  if(t=='dgItemEditEnd')
+	  {
+		  temp=res;
+		  trace(res.params.newValue);  
+	  }
 	  
       
 	  var r:* = ExternalInterface.call('fp_recorderAction', res);

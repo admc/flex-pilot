@@ -1,12 +1,15 @@
 package util
 {
 	import mx.controls.DataGrid;
+	import mx.controls.TextInput;
 	import mx.controls.dataGridClasses.DataGridColumn;
+	import mx.controls.listClasses.IDropInListItemRenderer;
+	import mx.events.FlexEvent;
 	
 
-	public class DataGridColumnStretch
+	public class DataGridUtil
 	{
-		public function DataGridColumnStretch()
+		public function DataGridUtil()
 		{
 		}
 		
@@ -19,7 +22,7 @@ package util
 					colArray[columnIndex].width=newWidth;
 				}
 				else{
-					throw new Error("send in the right column Index");
+					throw new Error("Incorrect columnIndex recieved");
 				}
 			
 				
@@ -38,5 +41,20 @@ package util
 			
 			return sum;
 		}
+		
+		public static function itemEdit(obj:* , row:Number,column:Number , field:* , newValue:*){
+			
+			trace("dg");
+			trace(obj is DataGrid);
+			trace(newValue);
+			trace(obj.dataProvider.getItemAt(row)[field]);
+			obj.dataProvider.getItemAt(row)[field]=newValue;
+			trace(obj.dataProvider.getItemAt(row)[field]);
+						
+			obj.dataProvider.itemUpdated(obj.dataProvider.getItemAt(row));
+			
+			
+		}
+		
 	}
 }

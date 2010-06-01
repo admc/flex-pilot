@@ -22,7 +22,7 @@ package org.flex_pilot.events {
   
   import org.flex_pilot.events.*;
   
-  import util.DataGridColumnStretch;
+  import util.DataGridUtil;
 
   public class Events {
     public function Events():void {}
@@ -211,18 +211,31 @@ package org.flex_pilot.events {
 		['rowIndex',-1],
 		['reason',null],
 		['itemRenderer',null],
-		['localX',NaN]
+		['localX',NaN],
+		['newValue',null]
 		];
 		var p:Object=Events.normalizeParams(defaults, args);
 		
-		trace("dg : "+(obj is DataGrid));
 		
 		var ev:FPDataGridEvent=new FPDataGridEvent(type , p.bubbles , p.cancelable , p.columnIndex , p.dataField , p.rowIndex , p.reason , p.itemRenderer ,p.localX);
-		DataGridColumnStretch.columnStretch(obj , p.columnIndex , p.localX );
-		obj.dispatchEvent(ev);
+		switch(type){
+		
+			case DataGridEvent.COLUMN_STRETCH :
+				DataGridUtil.columnStretch(obj , p.columnIndex , p.localX );
+				break ;
+			
+			case DataGridEvent.ITEM_EDIT_END :
+				trace("nw : "+p.newValue);
+				DataGridUtil.itemEdit(obj , p.rowIndex ,p.columnIndex, p.dataField , p.newValue); 
+				break;
+				
+		}
+			
+			
+		
+		//obj.dispatchEvent(ev);
 		
 	
-		trace(type +" : "+ p.bubbles +" : "+ p.cancelable +" : "+ p.columnIndex +" : "+ p.dataField +" : "+ p.rowIndex +" : "+ p.reason +" : "+ p.itemRenderer +" : "+p.localX)
 	}
   }
 }
