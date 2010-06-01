@@ -25,12 +25,14 @@ package org.flex_pilot {
   import flash.utils.*;
   
   import mx.controls.ComboBox;
+  import mx.controls.DataGrid;
   import mx.controls.DateChooser;
   import mx.controls.DateField;
   import mx.controls.List;
   import mx.controls.VSlider;
   import mx.controls.sliderClasses.Slider;
   import mx.events.CalendarLayoutChangeEvent;
+  import mx.events.DataGridEvent;
   import mx.events.ListEvent;
   import mx.events.SliderEvent;
   
@@ -73,6 +75,8 @@ package org.flex_pilot {
     private static var listItems:Array = [];
 	private static var sliderItems:Array=[];
 	private static var dateItems:Array=[];
+	private static var dgItems:Array=[];
+	
     private static var running:Boolean = false;
 	
 	public static var temp:*;
@@ -99,6 +103,12 @@ package org.flex_pilot {
 		if(item is DateChooser||item is DateField){
 			item.addEventListener(CalendarLayoutChangeEvent.CHANGE, FPRecorder.handleEvent);
 			FPRecorder.dateItems.push(item);
+		}
+		if(item is DataGrid){
+			item.addEventListener(DataGridEvent.COLUMN_STRETCH , FPRecorder.handleEvent);
+			item.addEventListener(DataGridEvent.ITEM_EDIT_END , FPRecorder.handleEvent);
+			FPRecorder.dgItems.push(item);
+			
 		}
         if (item is DisplayObjectContainer) {
           count = item.numChildren;
@@ -137,18 +147,27 @@ package org.flex_pilot {
         item.removeEventListener(ListEvent.CHANGE, FPRecorder.handleEvent);
       }
 	  
-	  var list:Array = FPRecorder.sliderItems;
+	  list = FPRecorder.sliderItems;
 	  for each (var item:* in list) {
 		  item.removeEventListener(SliderEvent.CHANGE, FPRecorder.handleEvent);
 	  }
 	  
-	  var list:Array = FPRecorder.dateItems;
+	  list = FPRecorder.dateItems;
 	  for each (var item:* in list) {
+		  
 		  item.removeEventListener(CalendarLayoutChangeEvent.CHANGE, FPRecorder.handleEvent);
+	  }
+	  
+	  list=FPRecorder.dgItems;
+	  
+	  for(var i:Number = 0 ; i<list.length;i++){
+		  var item:*=list[i];
+		  item.removeEventListener(DataGridEvent.COLUMN_STRETCH , FPRecorder.handleEvent);
+		  item.removeEventListener(DataGridEvent.ITEM_EDIT_END , FPRecorder.handleEvent);
 	  }
     }
 
-    private static function handleEvent(e:*):void {
+    public static function handleEvent(e:*){
 		
       var targ:* = e.target;
       var _this:* = FPRecorder;
@@ -174,9 +193,25 @@ package org.flex_pilot {
 			  }
 		case CalendarLayoutChangeEvent.CHANGE:
 			if(targ is DateChooser || targ is DateField){
-				trace("@ stage 1 : caught the event");
 				_this.generateAction('dateChange',targ);
 				_this.setNoClickZone();
+				break;
+			}
+		case DataGridEvent.COLUMN_STRETCH:
+			if(targ is DataGrid){
+				var opts:Object=new Object;
+				opts.localX=Number(e.localX);
+				//opts.currentTarget=FPLocator.generateLocator(e.currentTarget);
+				opts.columnIndex=e.columnIndex;
+				opts.dataField=e.dataField;
+				opts.rowIndex=e.rowIndex;
+				
+				_this.generateAction('dgColumnStretch', targ , opts);
+				_this.setNoClickZone();
+				break;	
+			}
+		case DataGridEvent.ITEM_EDIT_END:
+			if(targ is DataGrid){
 				break;
 			}
 	    case KeyboardEvent.KEY_DOWN:
@@ -190,10 +225,11 @@ package org.flex_pilot {
         // ComboBox changes
         case ListEvent.CHANGE:
 			if(targ is List || ComboBox)
-			{trace("list event");
+			{
           _this.generateAction('select', targ);
           _this.resetRecentTarget('change', e);
-          break;}
+          break;
+			}
         // Mouse/URL clicks
 		
         default:
@@ -310,7 +346,6 @@ package org.flex_pilot {
         chain: chain
       };
       var params:Object = {};
-	  trace("checkinng");
 	  
 
       //if we have a flex accordion
@@ -325,6 +360,7 @@ package org.flex_pilot {
 
       var p:String;
       for (p in opts) {
+		  //trace(p);
         params[p] = opts[p]
       }
       switch (t) {
@@ -347,14 +383,21 @@ package org.flex_pilot {
 		case 'dateChange':
 			params.value=targ.selectedDate;
 			break;
+		case 'dgColumnStretch' :
+			break;
       }
+	  
       for (p in params) {
         res.params = params;
         break;
-      }
+      
+	  }
+	  
+	  if(t=='dgColumnStretch')
+	  temp=res;
+	  
       
 	  var r:* = ExternalInterface.call('fp_recorderAction', res);
-	  
 	  
 	  
       if (!r) {

@@ -17,9 +17,12 @@ Copyright 2009, Matthew Eernisse (mde@fleegix.org) and Slide, Inc.
 package org.flex_pilot.events {
   import flash.events.*;
   
+  import mx.controls.DataGrid;
   import mx.events.*;
   
   import org.flex_pilot.events.*;
+  
+  import util.DataGridColumnStretch;
 
   public class Events {
     public function Events():void {}
@@ -195,7 +198,31 @@ package org.flex_pilot.events {
 		var p:Object=Events.normalizeParams(defaults, args);
 		var ev:FPCalendarLayoutChangeEvent=new FPCalendarLayoutChangeEvent(type, p.bubbles, p.cancelable, p.newDate, p.triggerEvent);
 		obj.dispatchEvent(ev);
+		
+	}
 	
+	public static function triggerDataGridEvent(obj:* , type:String , ...args):void{
+		
+		var defaults:Array=[
+		['bubbles' , true],
+		['cancelable' , false],
+		['columnIndex',-1],
+		['dataField',null],
+		['rowIndex',-1],
+		['reason',null],
+		['itemRenderer',null],
+		['localX',NaN]
+		];
+		var p:Object=Events.normalizeParams(defaults, args);
+		
+		trace("dg : "+(obj is DataGrid));
+		
+		var ev:FPDataGridEvent=new FPDataGridEvent(type , p.bubbles , p.cancelable , p.columnIndex , p.dataField , p.rowIndex , p.reason , p.itemRenderer ,p.localX);
+		DataGridColumnStretch.columnStretch(obj , p.columnIndex , p.localX );
+		obj.dispatchEvent(ev);
+		
+	
+		trace(type +" : "+ p.bubbles +" : "+ p.cancelable +" : "+ p.columnIndex +" : "+ p.dataField +" : "+ p.rowIndex +" : "+ p.reason +" : "+ p.itemRenderer +" : "+p.localX)
 	}
   }
 }

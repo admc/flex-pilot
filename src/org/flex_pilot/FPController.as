@@ -321,6 +321,15 @@ package org.flex_pilot {
 		
 		
 	}
+	
+	public static function dgColumnStretch(param:Object):void{
+		var obj:* = FPLocator.lookupDisplayObject(param);
+		//param.params.chain=param.params.currentTarget;
+		//param.params.currentTarget=FPLocator.lookupDisplayObject(param.params);
+		Events.triggerDataGridEvent(obj , DataGridEvent.COLUMN_STRETCH ,param.params);
+		
+		
+	}
     public static function getTextValue(params:Object):String {
       // Look up the item where we want to get the property
         var obj:* = FPLocator.lookupDisplayObject(params);
