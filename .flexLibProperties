@@ -2,7 +2,7 @@
 <flexLibProperties includeAllClasses="true" version="3">
   <includeClasses>
     <classEntry path="org.flex_pilot.events.FPDataGridEvent"/>
-    <classEntry path="util.DataGridColumnStretch"/>
+    <classEntry path="util.DataGridUtil"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
