@@ -30,7 +30,9 @@ package org.flex_pilot {
   import mx.controls.DateField;
   import mx.controls.List;
   import mx.controls.VSlider;
+  import mx.controls.listClasses.ListBase;
   import mx.controls.sliderClasses.Slider;
+  import mx.core.EventPriority;
   import mx.events.CalendarLayoutChangeEvent;
   import mx.events.DataGridEvent;
   import mx.events.ListEvent;
@@ -107,6 +109,10 @@ package org.flex_pilot {
 		if(item is DataGrid){
 			item.addEventListener(DataGridEvent.COLUMN_STRETCH , FPRecorder.handleEvent);
 			item.addEventListener(DataGridEvent.ITEM_EDIT_END , FPRecorder.handleEvent);
+			item.addEventListener(ListEvent.CHANGE , FPRecorder.handleEvent);
+			
+			// will record only after all other event listeners have done their job .
+			item.addEventListener(DataGridEvent.HEADER_RELEASE , FPRecorder.handleEvent );
 			FPRecorder.dgItems.push(item);
 			
 		}
@@ -164,6 +170,9 @@ package org.flex_pilot {
 		  var item:*=list[i];
 		  item.removeEventListener(DataGridEvent.COLUMN_STRETCH , FPRecorder.handleEvent);
 		  item.removeEventListener(DataGridEvent.ITEM_EDIT_END , FPRecorder.handleEvent);
+		  item.removeEventListener(ListEvent.CHANGE , FPRecorder.handleEvent);
+		  item.removeEventListener(DataGridEvent.HEADER_RELEASE , FPRecorder.handleEvent);
+		  
 	  }
     }
 
@@ -181,7 +190,7 @@ package org.flex_pilot {
 		case SliderEvent.CHANGE:
 			
 			// filtered the change in slider event from the change in List Event
-			  if(targ is Slider)
+			  if(targ is Slider && e is SliderEvent)
 			  {
 				  //trace("slider caught at switch");
 				  _this.generateAction('sliderChange',targ);
@@ -192,13 +201,13 @@ package org.flex_pilot {
 				  break;
 			  }
 		case CalendarLayoutChangeEvent.CHANGE:
-			if(targ is DateChooser || targ is DateField){
+			if((targ is DateChooser || targ is DateField) && e is CalendarLayoutChangeEvent){
 				_this.generateAction('dateChange',targ);
 				_this.setNoClickZone();
 				break;
 			}
 		case DataGridEvent.COLUMN_STRETCH:
-			if(targ is DataGrid){
+			if(targ is DataGrid && e is DataGridEvent){
 				var opts:Object=new Object;
 				opts.localX=Number(e.localX);
 				opts.columnIndex=e.columnIndex;
@@ -210,20 +219,43 @@ package org.flex_pilot {
 				break;	
 			}
 		case DataGridEvent.ITEM_EDIT_END:
-			if(targ is DataGrid){
+			if(targ is DataGrid && e is DataGridEvent){
 				var opts:Object=new Object;
 				opts.newValue=e.target.itemEditorInstance[e.target.columns[e.columnIndex].editorDataField];
 				
 				opts.columnIndex=e.columnIndex;
 				opts.dataField=e.dataField;
 				opts.rowIndex=e.rowIndex;
-				//opts.itemRenderer=e.itemRenderer;
+				
 				opts.reason=e.reason;
 				opts.cancelable=e.cancelable;
 				_this.generateAction('dgItemEditEnd', targ , opts);
 				_this.setNoClickZone();
 				break;
 			}
+			
+		case DataGridEvent.HEADER_RELEASE:
+			
+			if(targ is DataGrid && e is DataGridEvent){
+				
+				trace("I have the event");
+				
+				var opts:Object=new Object;
+				opts.columnIndex=e.columnIndex;
+				opts.dataField=e.dataField;
+				opts.rowIndex=e.rowIndex;
+				
+				opts.reason=e.reason;
+				opts.cancelable=e.cancelable;
+				
+				opts.sortDescending=targ.columns[e.columnIndex].sortDescending;
+				_this.generateAction('dgSort' , targ , opts);
+				_this.setNoClickZone();
+				break;
+			}
+		
+			
+			
 	    case KeyboardEvent.KEY_DOWN:
           // If we don't ignore 0 we get a translation error
           // as it generates a non unicode character
@@ -234,7 +266,7 @@ package org.flex_pilot {
           break;}
         // ComboBox changes
         case ListEvent.CHANGE:
-			if(targ is List || ComboBox)
+			if(targ is ListBase || ComboBox )
 			{
           _this.generateAction('select', targ);
           _this.resetRecentTarget('change', e);
@@ -398,6 +430,8 @@ package org.flex_pilot {
 		case 'dgItemEditEnd' :
 			
 			break;
+		case 'dgSort' :
+			break;
       }
 	  
       for (p in params) {
@@ -406,10 +440,10 @@ package org.flex_pilot {
       
 	  }
 	  
-	  if(t=='dgItemEditEnd')
+	  if(t=='dgSort')
 	  {
+		  trace("sort saved");
 		  temp=res;
-		  trace(res.params.newValue);  
 	  }
 	  
       

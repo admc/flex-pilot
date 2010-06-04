@@ -1,10 +1,13 @@
 package util
 {
+	import mx.collections.Sort;
+	import mx.collections.SortField;
 	import mx.controls.DataGrid;
 	import mx.controls.TextInput;
 	import mx.controls.dataGridClasses.DataGridColumn;
 	import mx.controls.listClasses.IDropInListItemRenderer;
 	import mx.events.FlexEvent;
+	import mx.events.IndexChangedEvent;
 	
 
 	public class DataGridUtil
@@ -54,7 +57,69 @@ package util
 			obj.dataProvider.itemUpdated(obj.dataProvider.getItemAt(row));
 			
 			
+			
 		}
+		
+		public static function sortGrid(obj:* , column:Number , descSort:Boolean):void{
+			
+			var s:Sort=obj.dataProvider.sort;
+			var sf:Array=s.fields;
+			var col:DataGridColumn = obj.columns[column];
+			
+			col.sortDescending=!descSort;
+			
+			
+			
+			if (sf)
+			{
+
+				var find:Boolean=false;
+				
+				for (var i:int = 0; i < sf.length; i++)
+				{
+					
+					if (sf[i].name == col.dataField)
+					{
+						// we're part of the current sort
+						f = sf[i]
+						// flip the logic so desc is new desired order
+						f.descending=descSort;
+						find=true;
+						break;
+					}
+				}
+				
+				if(!find)
+				{
+					s=new Sort;
+					var f:SortField = new SortField(col.dataField);
+					f.descending=!descSort;
+					col.sortDescending=descSort;
+					sf=[f];
+					s.fields=sf;
+					obj.dataProvider.sort=s;
+				}
+			}
+			else{
+				trace("got a null");
+				s=new Sort;
+				var f:SortField = new SortField(col.dataField);
+				f.descending=!descSort;
+				sf=[f];
+				s.fields=sf;
+				obj.dataProvider.sort=s;
+			}
+				
+			
+			
+			
+			
+			
+			
+			
+			
+		}
+		
 		
 	}
 }

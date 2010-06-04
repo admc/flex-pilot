@@ -322,17 +322,23 @@ package org.flex_pilot {
 		
 	}
 	
-	public static function dgColumnStretch(param:Object):void{
-		var obj:* = FPLocator.lookupDisplayObject(param);
-		Events.triggerDataGridEvent(obj , DataGridEvent.COLUMN_STRETCH ,param.params);
+	public static function dgColumnStretch(params:Object):void{
+		var obj:* = FPLocator.lookupDisplayObject(params);
+		Events.triggerDataGridEvent(obj , DataGridEvent.COLUMN_STRETCH ,params.params);
 		
 		
 	}
 	
-	public static function dgItemEdit(param:Object):void{
-		var obj:* = FPLocator.lookupDisplayObject(param);
-		Events.triggerDataGridEvent(obj , DataGridEvent.ITEM_EDIT_END ,param.params); 
+	public static function dgItemEdit(params:Object):void{
+		var obj:* = FPLocator.lookupDisplayObject(params);
+		Events.triggerDataGridEvent(obj , DataGridEvent.ITEM_EDIT_END ,params.params); 
 	}
+	
+	public static function dgSort(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerDataGridEvent(obj , DataGridEvent.HEADER_RELEASE ,params.params);
+	}
+	
     public static function getTextValue(params:Object):String {
       // Look up the item where we want to get the property
         var obj:* = FPLocator.lookupDisplayObject(params);
