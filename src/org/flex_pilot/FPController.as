@@ -19,6 +19,7 @@ package org.flex_pilot {
   import flash.geom.Point;
   import flash.utils.*;
   
+  import mx.controls.DataGrid;
   import mx.events.*;
   
   import org.flex_pilot.FPLocator;
@@ -338,6 +339,18 @@ package org.flex_pilot {
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		Events.triggerDataGridEvent(obj , DataGridEvent.HEADER_RELEASE ,params.params);
 	}
+	
+	public static function dgSortAscending(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerDataGridEvent(obj , FPDataGridEvent.SORT_ASCENDING ,params.params);
+	}
+	
+	public static function dgSortDescending(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerDataGridEvent(obj , FPDataGridEvent.SORT_DESCENDING ,params.params);
+		
+	}
+	
 	
     public static function getTextValue(params:Object):String {
       // Look up the item where we want to get the property

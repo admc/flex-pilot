@@ -213,7 +213,9 @@ package org.flex_pilot.events {
 		['itemRenderer',null],
 		['localX',NaN],
 		['newValue',null],
-		['sortDescending',null]   
+		['sortDescending',null] ,
+		['dir' , false] , 
+		['caseSensitivity' , false]
 		];
 		var p:Object=Events.normalizeParams(defaults, args);
 		
@@ -229,10 +231,14 @@ package org.flex_pilot.events {
 				DataGridUtil.itemEdit(obj , p.rowIndex ,p.columnIndex, p.dataField , p.newValue); 
 				break;
 			
-			case DataGridEvent.HEADER_RELEASE :
-				
-				//DataGridUtil.sortGrid(obj , p.columnIndex , p.sortDescending );
-				
+			case FPDataGridEvent.SORT_ASCENDING :
+				ev.preventDefault();
+				DataGridUtil.sortGridOrder(obj , p.columnIndex);
+				break;
+			
+			case FPDataGridEvent.SORT_DESCENDING :
+				ev.preventDefault();
+				DataGridUtil.sortGridOrder(obj , p.columnIndex);
 				break;
 
 				

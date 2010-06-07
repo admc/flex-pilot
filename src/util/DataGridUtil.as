@@ -1,5 +1,6 @@
 package util
 {
+	import mx.collections.ICollectionView;
 	import mx.collections.Sort;
 	import mx.collections.SortField;
 	import mx.controls.DataGrid;
@@ -60,55 +61,31 @@ package util
 			
 		}
 		
-		public static function sortGrid(obj:* , column:Number , descSort:Boolean):void{
+		public static function sortGridOrder(obj:* , index:Number , dir:Boolean=false , caseSensitive:Boolean=false ):void{
 			
-			var s:Sort=obj.dataProvider.sort;
-			var sf:Array=s.fields;
-			var col:DataGridColumn = obj.columns[column];
-			
-			col.sortDescending=!descSort;
-			
-			
-			
-			if (sf)
-			{
-
-				var find:Boolean=false;
+			var srt:Sort=new Sort();
+			var oldSort:Sort=obj.dataProvider.sort;
+			var column:DataGridColumn = obj.columns[index];
+			if(oldSort){
+				srt.fields=oldSort.fields;
+				var sf:SortField = new SortField(column.dataField  , dir , caseSensitive);
+				srt.fields.splice( 0 , 0 , sf);
 				
-				for (var i:int = 0; i < sf.length; i++)
-				{
-					
-					if (sf[i].name == col.dataField)
-					{
-						// we're part of the current sort
-						f = sf[i]
-						// flip the logic so desc is new desired order
-						f.descending=descSort;
-						find=true;
-						break;
-					}
-				}
-				
-				if(!find)
-				{
-					s=new Sort;
-					var f:SortField = new SortField(col.dataField);
-					f.descending=!descSort;
-					col.sortDescending=descSort;
-					sf=[f];
-					s.fields=sf;
-					obj.dataProvider.sort=s;
-				}
 			}
 			else{
-				trace("got a null");
-				s=new Sort;
-				var f:SortField = new SortField(col.dataField);
-				f.descending=!descSort;
-				sf=[f];
-				s.fields=sf;
-				obj.dataProvider.sort=s;
+				
+				var sf:SortField = new SortField(column.dataField  , dir , caseSensitive);
+				srt.fields=[sf];
+				
 			}
+			
+			obj.dataProvider.sort = srt;
+			obj.dataProvider.refresh();
+			
+			
+			
+		}
+			
 				
 			
 			
@@ -122,4 +99,3 @@ package util
 		
 		
 	}
-}
