@@ -238,7 +238,7 @@ package org.flex_pilot {
 			
 			if(targ is DataGrid && e is DataGridEvent){
 				
-				trace("I have the event");
+				
 				
 				var opts:Object=new Object;
 				opts.columnIndex=e.columnIndex;

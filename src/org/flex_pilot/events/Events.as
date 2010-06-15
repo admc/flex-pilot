@@ -233,12 +233,12 @@ package org.flex_pilot.events {
 			
 			case FPDataGridEvent.SORT_ASCENDING :
 				ev.preventDefault();
-				DataGridUtil.sortGridOrder(obj , p.columnIndex);
+				DataGridUtil.sortGridOrder(obj , p.columnIndex,p.dir);
 				break;
 			
 			case FPDataGridEvent.SORT_DESCENDING :
 				ev.preventDefault();
-				DataGridUtil.sortGridOrder(obj , p.columnIndex);
+				DataGridUtil.sortGridOrder(obj , p.columnIndex,p.dir);
 				break;
 
 				
