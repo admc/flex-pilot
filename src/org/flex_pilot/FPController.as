@@ -17,15 +17,21 @@ Copyright 2009, Matthew Eernisse (mde@fleegix.org) and Slide, Inc.
 package org.flex_pilot {
   import flash.events.*;
   import flash.geom.Point;
+  import flash.ui.Mouse;
   import flash.utils.*;
   
+  import mx.controls.AdvancedDataGrid;
   import mx.controls.DataGrid;
   import mx.events.*;
   
   import org.flex_pilot.FPLocator;
   import org.flex_pilot.events.*;
+  
+  
 
   public class FPController {
+	  
+	  
     public function FPController():void {}
     
   public static function mouseOver(params:Object):void {
@@ -174,6 +180,158 @@ package org.flex_pilot {
       stepTimer.addEventListener(TimerEvent.TIMER, doStep);
       stepTimer.start();
     }
+	
+	public static function dragDrop(params:Object):void{
+		
+		var dropLoc:* = FPLocator.lookupDisplayObject(params);
+		
+
+		var dragFrom:* =  FPLocator.lookupDisplayObject(params.start);	
+		
+
+			
+		
+		var startParams:*=params.start.params;
+		var endParams:*=params;
+		
+		
+		
+		
+		Events.triggerMouseEvent(dragFrom.stage, MouseEvent.MOUSE_MOVE, {
+			stageX: startParams.stageX,
+			stageY: startParams.stageY ,
+			ctrlKey : endParams.ctrlKey ,
+			shiftKey : endParams.shiftKey ,
+			altKey : endParams.altKey
+		});
+		
+		
+		Events.triggerMouseEvent(dragFrom, MouseEvent.ROLL_OVER);
+		Events.triggerMouseEvent(dragFrom, MouseEvent.MOUSE_OVER);
+		Events.triggerFocusEvent(dragFrom, FocusEvent.FOCUS_IN);
+		
+		
+		
+		
+		
+		
+		// just a trick . when the data component is fresh and asked to drag , the drag never occurs . 
+		Events.triggerDragEvent(dragFrom , DragEvent.DRAG_START ,startParams);                
+		
+		
+		
+		dragFrom.validateNow();
+		
+		dragFrom.selectedIndices=startParams.selectedIndices;
+		
+		dragFrom.destroyItemEditor();
+		
+		
+		
+		//ugly but can't help it . . . . component takes some time to set the value for selectedIndex and during that time any other activity might result in the required item not being selected
+
+		setTimeout(function():void{
+			
+		
+		
+		Events.triggerMouseEvent(dragFrom, MouseEvent.MOUSE_DOWN, {
+			buttonDown: true  , 
+			ctrlKey : endParams.ctrlKey ,
+			shiftKey : endParams.shiftKey ,
+			altKey : endParams.altKey}
+		);
+		
+		Events.triggerDragEvent(dragFrom , DragEvent.DRAG_START ,startParams);
+			
+		
+		
+		var deltaX:int = -startParams.stageX + endParams.stageX;
+		var deltaY:int = -startParams.stageY + endParams.stageY;
+		var stepCount:int = 10; // Just pick an arbitrary number of steps
+		// Number of pixels to move per step
+		var incrX:Number = deltaX / stepCount;
+		var incrY:Number = deltaY / stepCount;
+		// Current pos as the move happens
+		var currXAbs:Number = startParams.stageX;
+		var currYAbs:Number = startParams.stageY;
+		
+		var pnt:Point=dragFrom.globalToLocal(new Point(currXAbs , currYAbs));
+		
+		var currXLocal:Number = pnt.x;
+		var currYLocal:Number = pnt.y;
+		// Step number
+		var currStep:int = 0;
+		// Use a delay so we can see the move
+		var stepTimer:Timer = new Timer(50);
+		// Step function -- reposition per step
+		var doStep:Function = function ():void {
+			trace(currStep);
+			if (currStep <= stepCount) {
+				Events.triggerMouseEvent( dragFrom, MouseEvent.MOUSE_MOVE, {
+					stageX: currXAbs,
+					stageY: currYAbs,
+					localX: currXLocal,
+					localY: currYLocal ,
+					ctrlKey : endParams.ctrlKey ,
+					shiftKey : endParams.shiftKey ,
+					altKey : endParams.altKey
+				});
+				
+				currXAbs += incrX;
+				currYAbs += incrY;
+				currXLocal += incrX;
+				currYLocal += incrY;
+				currStep++;
+			}
+
+			else {
+				stepTimer.stop();
+				
+				
+				Events.triggerMouseEvent( dragFrom, MouseEvent.MOUSE_MOVE, {
+					stageX: currXAbs,
+					stageY: currYAbs,
+					localX: currXLocal,
+					localY: currYLocal ,
+					ctrlKey : endParams.ctrlKey ,
+					shiftKey : endParams.shiftKey ,
+					altKey : endParams.altKey
+				});
+				
+				Events.triggerMouseEvent(dropLoc, MouseEvent.ROLL_OVER);
+				Events.triggerMouseEvent(dropLoc, MouseEvent.MOUSE_OVER);
+				// Give it focus
+				Events.triggerFocusEvent(dropLoc, FocusEvent.FOCUS_IN);
+				
+				
+				Events.triggerMouseEvent(dragFrom, MouseEvent.MOUSE_UP, {
+					stageX: currXAbs,
+					stageY: currYAbs, 
+					localX : currXLocal ,
+					localY : currYLocal ,
+					ctrlKey : endParams.ctrlKey ,
+					shiftKey : endParams.shiftKey ,
+					altKey : endParams.altKey
+				});
+				
+				
+				Events.triggerMouseEvent(dragFrom , MouseEvent.CLICK);
+				
+				
+				
+			}
+		}
+
+		stepTimer.addEventListener(TimerEvent.TIMER, doStep);
+		stepTimer.start();
+		
+		
+		} , 25);
+		
+		
+
+		
+	}
 
     // Ensure coords are in the right format and are numbers
     private static function parseCoords(coordsStr:String):Point {
@@ -256,9 +414,12 @@ package org.flex_pilot {
     }
 
     public static function select(params:Object):void {
+		
+		trace("sending");
       // Look up the item to write to
       var obj:* = FPLocator.lookupDisplayObject(params);
       var sel:* = obj.selectedItem;
+	  
       var item:*;
       // Give the item focus
       Events.triggerFocusEvent(obj, FocusEvent.FOCUS_IN);
@@ -290,6 +451,7 @@ package org.flex_pilot {
           var targetData:String = params.data || params.value;
           if (sel.data != targetData) {
             Events.triggerListEvent(obj, ListEvent.CHANGE);
+			
             for each (item in obj.dataProvider) {
               if (item.data == targetData) {
                 obj.selectedItem = item;
@@ -297,59 +459,171 @@ package org.flex_pilot {
             }
           }
           break;
+		case ('indices' in params):
+			if (obj.selectedIndices != params.indices) {
+				Events.triggerListEvent(obj, ListEvent.CHANGE);
+				obj.selectedIndices = params.indices;
+			}
+			break;
+		case ('selectedItem' in params):
+			
+			var found:Boolean=false;;
+			
+			
+			for(var i:* in obj.dataProvider){
+				
+				found=true;
+			
+				for(var v:* in params.selectedItem){
+					
+					
+					
+					// mx_internal_uid is the additional column added to dataProvider which is visible after some user interaction on the component
+					if(params.selectedItem[v]!=obj.dataProvider[i][v]&&v.indexOf('mx_internal_uid')==-1){
+						found=false;
+						break;
+					}
+				}
+				
+				
+				if(found){
+					//do the move
+					
+					obj.validateNow();    
+					
+					obj.selectedIndex=i;
+					
+					obj.scrollToIndex(i);
+					
+					obj.destroyItemEditor();
+					
+					Events.triggerListEvent(obj, ListEvent.CHANGE);
+					
+					break;
+				}
+				
+				
+					
+			
+		}
+			
+
+		
+			break;
+			
         default:
           // Do nothing
       }
     }
 	
 	public static function sliderChange(params:Object):void{
-		
-		trace("triggering the slider event");
+
 		var obj:* = FPLocator.lookupDisplayObject(params);
-		obj.value=params.params.value;
+		obj.value=params.value;
 		Events.triggerSliderEvent(obj , 'change');
-		
-		
-		
 		
 	}
 	
+
 	public static function dateChange(params:Object):void{
 		
 		var obj:* = FPLocator.lookupDisplayObject(params);
-		obj.selectedDate=params.params.value;
+			
+		var dat:Date=new Date();
+		dat.time=params.value;
+		obj.selectedDate=dat;
 		Events.triggerCalendarLayoutChangeEvent(obj , 'change');
 		
 		
 	}
 	
+	
 	public static function dgColumnStretch(params:Object):void{
 		var obj:* = FPLocator.lookupDisplayObject(params);
-		Events.triggerDataGridEvent(obj , DataGridEvent.COLUMN_STRETCH ,params.params);
+		Events.triggerDataGridEvent(obj , DataGridEvent.COLUMN_STRETCH ,params);
 		
 		
 	}
+	
 	
 	public static function dgItemEdit(params:Object):void{
 		var obj:* = FPLocator.lookupDisplayObject(params);
-		Events.triggerDataGridEvent(obj , DataGridEvent.ITEM_EDIT_END ,params.params); 
+		Events.triggerDataGridEvent(obj , DataGridEvent.ITEM_EDIT_END ,params); 
 	}
 	
 	public static function dgSort(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerDataGridEvent(obj , DataGridEvent.HEADER_RELEASE ,params);
+	}
+	
+	public static function dgHeaderRelease(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		Events.triggerDataGridEvent(obj , DataGridEvent.HEADER_RELEASE ,params.params);
 	}
 	
 	public static function dgSortAscending(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
+		params.params.dir=false;
 		Events.triggerDataGridEvent(obj , FPDataGridEvent.SORT_ASCENDING ,params.params);
 	}
 	
 	public static function dgSortDescending(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
+		params.params.dir=true;
 		Events.triggerDataGridEvent(obj , FPDataGridEvent.SORT_DESCENDING ,params.params);
 		
 	}
+	
+	
+	public static function adgItemOpen(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.ITEM_OPENING ,params);
+	}
+	
+	public static function adgItemClose(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.ITEM_OPENING ,params);
+	}
+	
+	
+	public static function adgColumnStretch(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.COLUMN_STRETCH ,params);
+	}
+	
+	public static function adgHeaderShift(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerIndexChangedEvent(obj , IndexChangedEvent.HEADER_SHIFT , params);
+	}
+	
+	public static function adgSort(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.HEADER_RELEASE ,params);
+	}
+	
+	public static function adgHeaderRelease(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.HEADER_RELEASE ,params);
+	}
+	
+	public static function adgSortAscending(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		params.params.dir=false;
+		Events.triggerAdvancedDataGridEvent(obj , FPAdvancedDataGridEvent.SORT_ASCENDING , params);
+	}
+	
+	public static function adgSortDescending(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		params.params.dir=true;
+		Events.triggerAdvancedDataGridEvent(obj , FPAdvancedDataGridEvent.SORT_ASCENDING , params);
+	}
+	
+	public static function adgItemEdit(params:Object):void{
+		var obj:*= FPLocator.lookupDisplayObject(params);
+		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.ITEM_EDIT_END , params);			
+	}
+	
+	
 	
 	
     public static function getTextValue(params:Object):String {

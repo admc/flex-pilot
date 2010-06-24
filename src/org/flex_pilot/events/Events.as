@@ -17,12 +17,18 @@ Copyright 2009, Matthew Eernisse (mde@fleegix.org) and Slide, Inc.
 package org.flex_pilot.events {
   import flash.events.*;
   
+  import mx.controls.AdvancedDataGrid;
   import mx.controls.DataGrid;
+  import mx.controls.dataGridClasses.DataGridColumn;
+  import mx.core.DragSource;
+  import mx.core.mx_internal;
   import mx.events.*;
   
   import org.flex_pilot.events.*;
   
+  import util.AdvancedDataGridUtil;
   import util.DataGridUtil;
+  import util.IndexChangeUtil;
 
   public class Events {
     public function Events():void {}
@@ -82,7 +88,10 @@ package org.flex_pilot.events {
         ['buttonDown', false],
         ['delta', 0]
       ];
+	  
+	  
       var p:Object = Events.normalizeParams(defaults, args);
+	  
       var ev:FPMouseEvent = new FPMouseEvent(type, p.bubbles,
           p.cancelable, p.localX, p.localY,
           p.relatedObject, p.ctrlKey, p.altKey, p.shiftKey,
@@ -170,7 +179,6 @@ package org.flex_pilot.events {
     }
 	
 	
-	///////////////////////**  Methods created in progress my MaSh  **//////////////////////////
 	
 	public static function  triggerSliderEvent(obj:* , type:String , ...args):void{
 		var defaults:Array=[
@@ -196,6 +204,8 @@ package org.flex_pilot.events {
 		];
 		
 		var p:Object=Events.normalizeParams(defaults, args);
+		
+		
 		var ev:FPCalendarLayoutChangeEvent=new FPCalendarLayoutChangeEvent(type, p.bubbles, p.cancelable, p.newDate, p.triggerEvent);
 		obj.dispatchEvent(ev);
 		
@@ -228,17 +238,27 @@ package org.flex_pilot.events {
 				break ;
 			
 			case DataGridEvent.ITEM_EDIT_END :
+				for(var i:* in obj.columns)
+				if(p.dataField==obj.columns[i].dataField){
+					p.columns=i;
+				}
+					
+					
 				DataGridUtil.itemEdit(obj , p.rowIndex ,p.columnIndex, p.dataField , p.newValue); 
 				break;
 			
 			case FPDataGridEvent.SORT_ASCENDING :
 				ev.preventDefault();
-				DataGridUtil.sortGridOrder(obj , p.columnIndex,p.dir);
+				DataGridUtil.sortGridOrder(obj , p.columnIndex , p.dir ,p.caseSensitivity);
 				break;
 			
 			case FPDataGridEvent.SORT_DESCENDING :
 				ev.preventDefault();
-				DataGridUtil.sortGridOrder(obj , p.columnIndex,p.dir);
+				DataGridUtil.sortGridOrder(obj , p.columnIndex , p.dir ,p.caseSensitivity);
+				break;
+			case DataGridEvent.HEADER_RELEASE :
+				ev.preventDefault();
+				DataGridUtil.dgSort(obj , p.columnIndex , p.caseSensitivity );
 				break;
 
 				
@@ -251,6 +271,147 @@ package org.flex_pilot.events {
 		
 	
 	}
+	
+	public static function triggerAdvancedDataGridEvent(obj:* , type:String , ...args):void{
+		var defaults:Array = [
+			['bubbles' , false] , 
+			['cancelable' , true] ,
+			['columnIndex' , -1],
+			['dataField' , null ] ,
+			['rowIndex' , -1 ],
+			['reason' , null ] ,
+			['localX' , NaN ], 
+			['multiColumnSort' ,false] ,
+			['removeColumnFromSort' , false] , 
+			['item' , null ],
+			['triggerEvent' ,null] ,
+			['headerPart' , null] ,
+			['opening' , true], 
+			['caseSensitivity' , false] , 
+			['dir' , false] , 
+			['newValue' , null]
+		];
+		
+		var p:Object=Events.normalizeParams(defaults, args);
+		
+		
+		trace(p.rowIndex , p.columnIndex);
+		
+		// just a simple mechanism to handle the adg if it's dataProvider had been reset . this may cause a change in the value for the field 'mx_internal_uid' in dataProvider with respect to the original testcase
+		var found:Boolean=false;
+		if(p.item)
+		for(var i:* in obj.dataProvider){
+			
+			found=true;
+			
+			for(var v:* in p.item){
+				if(p.item[v]!=obj.dataProvider[i][v]&&v.indexOf('mx_internal_uid')==-1){
+					found=false;
+					break;
+				}
+			}
+			
+			
+			if(p.item.length&&found){
+				p.columnIndex=i;
+				p.item=obj.dataProvider[i];
+				break;
+			}
+		}
+		
+		trace(p.rowIndex , p.columnIndex);
+		
+		var ev:FPAdvancedDataGridEvent = new FPAdvancedDataGridEvent( type , p.bubbles , p.cancelable , p.columnIndex , p.dataField , p.rowIndex , p.reason , obj.itemToItemRenderer(p.item)  , p.localX , p.multiColumnSort , p.removeColumnFromSort , p.item , p.triggerEvent , p.headerPart);
+		
+		
+		
+		
+		switch(type){
+			case AdvancedDataGridEvent.ITEM_OPENING :
+				ev.opening=p.opening;
+				break;
+			case AdvancedDataGridEvent.COLUMN_STRETCH :
+				AdvancedDataGridUtil.columnStretch(obj , p.columnIndex , p.localX);
+				break;
+			case AdvancedDataGridEvent.HEADER_RELEASE :
+				ev.preventDefault();
+				AdvancedDataGridUtil.adgSort(obj , p.columnIndex , p.caseSensitivity );
+				break;
+			case FPAdvancedDataGridEvent.SORT_ASCENDING :
+				ev.preventDefault();
+				AdvancedDataGridUtil.sortGridOrder(obj , p.columnIndex , p.dir , p.caseSensitivity);
+				break;
+			
+			case FPAdvancedDataGridEvent.SORT_DESCENDING :
+				ev.preventDefault();
+				AdvancedDataGridUtil.sortGridOrder(obj , p.columnIndex , p.dir , p.caseSensitivity);
+				break;
+			case AdvancedDataGridEvent.ITEM_EDIT_END :
+				ev.preventDefault();
+				AdvancedDataGridUtil.itemEdit(obj , p.rowIndex , p.columnIndex , p.newValue);
+				break;
+		}
+		
+	}
+	
+	public static function triggerIndexChangedEvent(obj:* , type:String , ...args):void{
+		
+		var defaults:Array = [
+			['bubbles' , false] , 
+			['cancelable' , false] ,
+			['relatedObject' , null] ,
+			['oldIndex' , -1] ,
+			['newIndex' , -1] , 
+			['triggerEvent' , null]
+		];
+		
+		var p:Object=Events.normalizeParams(defaults, args);
+		
+		var ev:FPIndexChangedEvent = new FPIndexChangedEvent(type , p.bubbles , p.cancelable , p.relatedObject , p.oldIndex , p.newIndex , p.triggerEvent);
+		
+		IndexChangeUtil.headerShift(obj , p.oldIndex , p.newIndex);
+		
+		obj.dispatchEvent(ev);
+	}
+	
+	public static function triggerDragEvent(obj:* , type , ...args):void{
+	
+		var defaults:Array=[
+			['bubbles' , false] ,
+			['cancelable' , true],
+			['dragInitiator' , null],
+			['dragSource' , null ],
+			['action' , null],
+			['ctrlKey' ,false],
+			['altKey' , false],
+			['shiftKey' , false] ,
+			['stageX' , NaN ],
+			['stageY' , NaN] ,
+			['localX' , NaN ] ,
+			['localY' , NaN] , 
+			['selectedItems' , null]
+		];
+		
+		var p:Object=Events.normalizeParams(defaults, args);
+		
+		var ds:DragSource=new DragSource;
+		
+		ds.addHandler( function(useDataField:Boolean=true):Array{
+			return p.selectedItems;
+		} , "items");
+		
+		
+		var e:FPDragEvent=new FPDragEvent(type ,p.bubbles , p.cancelable , p.dragInitiator , ds , p.action , p.ctrlKey , p.altKey , p.shiftKey );
+		
+		e.localX=p.localX;
+		e.localY=p.localY;
+		
+		obj.dispatchEvent(e);
+		
+	}
+	
+	
+	
   }
 }
 

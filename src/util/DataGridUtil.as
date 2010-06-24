@@ -48,12 +48,7 @@ package util
 		
 		public static function itemEdit(obj:* , row:Number,column:Number , field:* , newValue:*){
 			
-			trace("dg");
-			trace(obj is DataGrid);
-			trace(newValue);
-			trace(obj.dataProvider.getItemAt(row)[field]);
 			obj.dataProvider.getItemAt(row)[field]=newValue;
-			trace(obj.dataProvider.getItemAt(row)[field]);
 						
 			obj.dataProvider.itemUpdated(obj.dataProvider.getItemAt(row));
 			
@@ -61,20 +56,21 @@ package util
 			
 		}
 		
-		public static function sortGridOrder(obj:* , index:Number , dir:Boolean=false , caseSensitive:Boolean=false ):void{
+		public static function sortGridOrder(obj:* , index:Number , descending:Boolean=false , caseSensitive:Boolean=false ):void{
 			
 			var srt:Sort=new Sort();
 			var oldSort:Sort=obj.dataProvider.sort;
-			var column:DataGridColumn = obj.columns[index];
+			var column:* = obj.columns[index];
 			if(oldSort){
 				srt.fields=oldSort.fields;
-				var sf:SortField = new SortField(column.dataField  , dir , caseSensitive);
+				var sf:SortField = new SortField(column.dataField  , caseSensitive , descending );
 				srt.fields.splice( 0 , 0 , sf);
 				
 			}
 			else{
 				
-				var sf:SortField = new SortField(column.dataField  , dir , caseSensitive);
+				var sf:SortField = new SortField(column.dataField  , caseSensitive , descending );
+				
 				srt.fields=[sf];
 				
 			}
@@ -84,9 +80,26 @@ package util
 			
 			
 			
+		}
+		
+		public static  function dgSort(obj:* , index:Number , caseSensitive:Boolean=false):void{
+			
+			var val:Boolean=true;
+			var sort:Sort=obj.dataProvider.sort;
+			var fields:Array=sort.fields;
+			
+			for(var i:Number=0 ; i<fields.length ; i++){
+				if(fields[i].name==obj.columns[index].dataField)
+				{
+					val=!fields[i].descending;
+				}
+			}
+			obj.dataProvider.sort.fields=[new SortField(obj.columns[index].dataField , caseSensitive , val)];
+			obj.dataProvider.refresh();
 			
 		}
 			
+		
 				
 			
 			
