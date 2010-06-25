@@ -36,23 +36,21 @@ package org.flex_pilot {
       var con:LoaderContext = new LoaderContext(false,
           ApplicationDomain.currentDomain,
           SecurityDomain.currentDomain);
-	  trace("loading flex pilot");
-	  FlexPilot.init({ context: context, domains: domains });
 	  
+
       loader.contentLoaderInfo.addEventListener(
           Event.COMPLETE, function ():void {
 			  
 			  
 			  
-			  // MY CUSTOM DEV CODE HERE
-			  /*
+			  
         wm = ApplicationDomain.currentDomain.getDefinition(
             "org.flex_pilot.FlexPilot") as Class;
         wm.init({ context: context, domains: domains });
-			  */
+			  
       });
 	  
-      //loader.load(req, con);
+      loader.load(req, con);
 	  
     }
   }

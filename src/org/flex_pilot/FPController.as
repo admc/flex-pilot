@@ -558,19 +558,19 @@ package org.flex_pilot {
 	
 	public static function dgHeaderRelease(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
-		Events.triggerDataGridEvent(obj , DataGridEvent.HEADER_RELEASE ,params.params);
+		Events.triggerDataGridEvent(obj , DataGridEvent.HEADER_RELEASE ,params);
 	}
 	
 	public static function dgSortAscending(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		params.params.dir=false;
-		Events.triggerDataGridEvent(obj , FPDataGridEvent.SORT_ASCENDING ,params.params);
+		Events.triggerDataGridEvent(obj , FPDataGridEvent.SORT_ASCENDING ,params);
 	}
 	
 	public static function dgSortDescending(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		params.params.dir=true;
-		Events.triggerDataGridEvent(obj , FPDataGridEvent.SORT_DESCENDING ,params.params);
+		Events.triggerDataGridEvent(obj , FPDataGridEvent.SORT_DESCENDING ,params);
 		
 	}
 	
