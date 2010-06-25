@@ -430,7 +430,6 @@ package org.flex_pilot {
 		case (e is DataGridEvent && e.type==DataGridEvent.COLUMN_STRETCH ) :
 				var opts:Object=new Object;
 				opts.localX=Number(e.localX);
-				trace(e.localX);
 				opts.columnIndex=e.columnIndex;
 				opts.rowIndex=e.rowIndex;
 				_this.generateAction('dgColumnStretch', targ , opts);
@@ -501,7 +500,6 @@ package org.flex_pilot {
 			opts.columnIndex=e.columnIndex;
 			opts.dataField=e.dataField;
 			opts.rowIndex=e.rowIndex;
-			opts.item=e.item;
 			_this.generateAction('adgColumnStretch', targ , opts);
 			_this.setNoClickZone();
 			break;
@@ -512,7 +510,6 @@ package org.flex_pilot {
 			opts.cancelable=e.cancelable;
 			opts.columnIndex = e.columnIndex;
 			opts.dataField= e.dataField;
-			opts.item=e.item;
 			opts.removeColumnFromSort=e.removeColumnFromSort;
 			_this.generateAction('adgHeaderRelease', targ , opts);
 			_this.setNoClickZone();
@@ -525,7 +522,6 @@ package org.flex_pilot {
 			opts.columnIndex = e.columnIndex;
 			opts.rowIndex=e.rowIndex;
 			opts.dataField= e.dataField;
-			opts.item=e.item;
 			opts.reason=e.reason;
 			opts.newValue=e.target.itemEditorInstance[e.target.columns[e.columnIndex].editorDataField];
 			_this.generateAction('adgItemEdit', targ , opts);
