@@ -59,7 +59,7 @@
 						
 						<mx:VBox width="100%" horizontalAlign="center" paddingTop="10">
 							<mx:Image horizontalAlign="center">
-								<mx:source>@Embed(source='style/darkroom.swf',symbol='finial')</mx:source>
+								<mx:source>@Embed(source='../style/darkroom.swf',symbol='finial')</mx:source>
 							</mx:Image>
 						</mx:VBox>
 						
