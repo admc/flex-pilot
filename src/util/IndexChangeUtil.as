@@ -1,8 +1,6 @@
 package util
 {
-	import mx.controls.AdvancedDataGrid;
-	import mx.controls.advancedDataGridClasses.AdvancedDataGridColumn;
-
+	
 	public class IndexChangeUtil
 	{
 		public function IndexChangeUtil()
