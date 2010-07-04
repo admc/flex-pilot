@@ -195,7 +195,7 @@ package org.flex_pilot {
 		var endParams:*=params;
 		
 		
-		
+		trace(startParams.stageX , startParams.stageY , endParams.startX , endParams.startY );
 		
 		Events.triggerMouseEvent(dragFrom.stage, MouseEvent.MOUSE_MOVE, {
 			stageX: startParams.stageX,
@@ -528,9 +528,8 @@ package org.flex_pilot {
 	public static function dateChange(params:Object):void{
 		
 		var obj:* = FPLocator.lookupDisplayObject(params);
-			
-		var dat:Date=new Date();
-		dat.time=params.value;
+		trace('params.value' , params.value);
+		var dat:Date=new Date(params.value);
 		obj.selectedDate=dat;
 		Events.triggerCalendarLayoutChangeEvent(obj , 'change');
 		

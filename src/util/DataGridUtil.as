@@ -86,7 +86,13 @@ package util
 			
 			var val:Boolean=true;
 			var sort:Sort=obj.dataProvider.sort;
+			
+			if(sort){
+				
+			
 			var fields:Array=sort.fields;
+			
+			
 			
 			for(var i:Number=0 ; i<fields.length ; i++){
 				if(fields[i].name==obj.columns[index].dataField)
@@ -94,6 +100,16 @@ package util
 					val=!fields[i].descending;
 				}
 			}
+			
+			
+			}
+			else{
+				obj.dataProvider.sort=new Sort;
+				val=true;
+
+			}
+			
+			
 			obj.dataProvider.sort.fields=[new SortField(obj.columns[index].dataField , caseSensitive , val)];
 			obj.dataProvider.refresh();
 			

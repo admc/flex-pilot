@@ -33,7 +33,9 @@ package org.flex_pilot {
 	  
 	  FlexPilot.init({ context: context, domains: domains });
 	  
-      var con:LoaderContext = new LoaderContext(false,
+	  trace("done");
+	  
+      /*var con:LoaderContext = new LoaderContext(false,
           ApplicationDomain.currentDomain,
           SecurityDomain.currentDomain);
 	  
@@ -50,7 +52,7 @@ package org.flex_pilot {
 			  
       });
 	  
-      loader.load(req, con);
+      loader.load(req, con);*/
 	  
     }
   }
