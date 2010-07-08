@@ -826,7 +826,7 @@ package org.flex_pilot {
         case 'select':
           var sel:* = targ.selectedItem;
             
-		  
+		  var labelField:String;
 		  
 		FP::complete{ 
 		  if(targ is AdvancedDataGridBase || targ is DataGridBase){
@@ -841,7 +841,7 @@ package org.flex_pilot {
 		  else
 		  {
 			  
-			  var labelField:String = targ.labelField ?
+			  labelField = targ.labelField ?
 				  targ.labelField : 'label';
 			  params.label = sel[labelField];
 		  }
@@ -861,7 +861,7 @@ package org.flex_pilot {
 			else
 			{
 				
-				var labelField:String = targ.labelField ?
+				labelField = targ.labelField ?
 					targ.labelField : 'label';
 				params.label = sel[labelField];
 			}
