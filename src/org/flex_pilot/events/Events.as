@@ -17,7 +17,7 @@ Copyright 2009, Matthew Eernisse (mde@fleegix.org) and Slide, Inc.
 package org.flex_pilot.events {
   import flash.events.*;
   
-  import mx.controls.AdvancedDataGrid;
+  
   import mx.controls.DataGrid;
   import mx.controls.dataGridClasses.DataGridColumn;
   import mx.core.DragSource;
@@ -26,9 +26,16 @@ package org.flex_pilot.events {
   
   import org.flex_pilot.events.*;
   
-  import util.AdvancedDataGridUtil;
+  
   import util.DataGridUtil;
   import util.IndexChangeUtil;
+  
+  FP::complete{
+  import util.AdvancedDataGridUtil;
+  import mx.controls.AdvancedDataGrid;
+  }
+  
+  
 
   public class Events {
     public function Events():void {}
@@ -272,6 +279,7 @@ package org.flex_pilot.events {
 	
 	}
 	
+	FP::complete
 	public static function triggerAdvancedDataGridEvent(obj:* , type:String , ...args):void{
 		var defaults:Array = [
 			['bubbles' , false] , 

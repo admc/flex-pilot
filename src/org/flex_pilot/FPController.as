@@ -20,12 +20,16 @@ package org.flex_pilot {
   import flash.ui.Mouse;
   import flash.utils.*;
   
-  import mx.controls.AdvancedDataGrid;
+  
   import mx.controls.DataGrid;
   import mx.events.*;
   
   import org.flex_pilot.FPLocator;
   import org.flex_pilot.events.*;
+  
+  FP::complete{
+	  import mx.controls.AdvancedDataGrid;  
+  }
   
   
 
@@ -574,54 +578,76 @@ package org.flex_pilot {
 	}
 	
 	
+	FP::complete{
 	public static function adgItemOpen(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.ITEM_OPENING ,params);
 	}
+	}
 	
+	
+	FP::complete{
 	public static function adgItemClose(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.ITEM_OPENING ,params);
 	}
+	}
 	
 	
+	FP::complete{
 	public static function adgColumnStretch(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.COLUMN_STRETCH ,params);
 	}
+	}
 	
+	
+	FP::complete{
 	public static function adgHeaderShift(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		Events.triggerIndexChangedEvent(obj , IndexChangedEvent.HEADER_SHIFT , params);
 	}
+	}
 	
+	FP::complete{
 	public static function adgSort(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.HEADER_RELEASE ,params);
 	}
+	}
 	
+	FP::complete{
 	public static function adgHeaderRelease(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.HEADER_RELEASE ,params);
 	}
+	}
 	
+	
+	FP::complete{
 	public static function adgSortAscending(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		params.params.dir=false;
 		Events.triggerAdvancedDataGridEvent(obj , FPAdvancedDataGridEvent.SORT_ASCENDING , params);
 	}
+	}
 	
+	
+	FP::complete{
 	public static function adgSortDescending(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		params.params.dir=true;
 		Events.triggerAdvancedDataGridEvent(obj , FPAdvancedDataGridEvent.SORT_ASCENDING , params);
 	}
+	}
 	
+	
+	FP::complete{
 	public static function adgItemEdit(params:Object):void{
 		var obj:*= FPLocator.lookupDisplayObject(params);
 		Events.triggerAdvancedDataGridEvent(obj , AdvancedDataGridEvent.ITEM_EDIT_END , params);			
 	}
-	
+	}
 	
 	
 	
