@@ -100,7 +100,7 @@ package org.flex_pilot {
 	
 	
 	// just in case u want to record for clicks placed while you are performing other user actities  Ex. recording of clicks while selecting an item from a list
-	public static var recordExtraClicks=false;
+	public static var recordExtraClicks:Boolean=false;
 	
 	
 	private static var draggerParams:Object;
@@ -137,6 +137,7 @@ package org.flex_pilot {
       // Stop the explorer if it's going
       FPExplorer.stop();
 	  
+	  
 	  for each(var elem:* in typesAllowed){
 		  
 		  typesAllowedObj[elem[0]]=elem[1];
@@ -147,13 +148,17 @@ package org.flex_pilot {
         // the locator chain
         var count:int = 0;
 		
+		var i:Number=0;
+		
+		var arr:Array;
+		
 		// With ListBase select event on various other component like DataGrid is also handled . . . . :)
         if (item is ComboBox || item is ListBase || item is AdvancedListBase) {
           FPRecorder.listItems.push(item);
           
 		  if(FPRecorder.typesAllowedObj[ListEvent.CHANGE]){
-			  var arr:Array = FPRecorder.typesAllowedObj[ListEvent.CHANGE] as Array;
-			  for(var i:Number=0 ; i<arr.length ; i++)
+			  arr = FPRecorder.typesAllowedObj[ListEvent.CHANGE] as Array;
+			  for(i=0 ; i<arr.length ; i++)
 				  if(item is arr[i]){
 					  item.addEventListener(ListEvent.CHANGE, FPRecorder.handleEvent);
 				  }
@@ -167,8 +172,8 @@ package org.flex_pilot {
 		if(item is Slider){
 			FPRecorder.sliderItems.push(item);
 			if(FPRecorder.typesAllowedObj[SliderEvent.CHANGE]){
-				var arr:Array = FPRecorder.typesAllowedObj[SliderEvent.CHANGE] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[SliderEvent.CHANGE] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(SliderEvent.CHANGE , FPRecorder.handleEvent);
 					}
@@ -181,8 +186,8 @@ package org.flex_pilot {
 			FPRecorder.dateItems.push(item);
 			
 			if(FPRecorder.typesAllowedObj[CalendarLayoutChangeEvent.CHANGE]){
-				var arr:Array = FPRecorder.typesAllowedObj[CalendarLayoutChangeEvent.CHANGE] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[CalendarLayoutChangeEvent.CHANGE] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(CalendarLayoutChangeEvent.CHANGE, FPRecorder.handleEvent);
 					}
@@ -195,24 +200,24 @@ package org.flex_pilot {
 			FPRecorder.dgItems.push(item);
 			
 			if(FPRecorder.typesAllowedObj[DataGridEvent.COLUMN_STRETCH]){
-				var arr:Array = FPRecorder.typesAllowedObj[DataGridEvent.COLUMN_STRETCH] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[DataGridEvent.COLUMN_STRETCH] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(DataGridEvent.COLUMN_STRETCH , FPRecorder.handleEvent);
 					}
 			}
 			
 			if(FPRecorder.typesAllowedObj[DataGridEvent.HEADER_RELEASE]){
-				var arr:Array = FPRecorder.typesAllowedObj[DataGridEvent.HEADER_RELEASE] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[DataGridEvent.HEADER_RELEASE] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(DataGridEvent.HEADER_RELEASE , FPRecorder.handleEvent );
 					}
 			}
 			
 			if(FPRecorder.typesAllowedObj[DataGridEvent.ITEM_EDIT_END]){
-				var arr:Array = FPRecorder.typesAllowedObj[DataGridEvent.ITEM_EDIT_END] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[DataGridEvent.ITEM_EDIT_END] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(DataGridEvent.ITEM_EDIT_END , FPRecorder.handleEvent);
 					}
@@ -226,16 +231,16 @@ package org.flex_pilot {
 			FPRecorder.adgItems.push(item);
 			
 			if(FPRecorder.typesAllowedObj[AdvancedDataGridEvent.ITEM_OPEN]){
-				var arr:Array = FPRecorder.typesAllowedObj[AdvancedDataGridEvent.ITEM_OPEN] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[AdvancedDataGridEvent.ITEM_OPEN] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(AdvancedDataGridEvent.ITEM_OPEN, FPRecorder.handleEvent);
 					}
 			}
 			
 			if(FPRecorder.typesAllowedObj[AdvancedDataGridEvent.ITEM_CLOSE]){
-				var arr:Array = FPRecorder.typesAllowedObj[AdvancedDataGridEvent.ITEM_CLOSE] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[AdvancedDataGridEvent.ITEM_CLOSE] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(AdvancedDataGridEvent.ITEM_CLOSE, FPRecorder.handleEvent);
 					}
@@ -249,8 +254,8 @@ package org.flex_pilot {
 			
 			
 			if(FPRecorder.typesAllowedObj[AdvancedDataGridEvent.COLUMN_STRETCH]){
-				var arr:Array = FPRecorder.typesAllowedObj[AdvancedDataGridEvent.COLUMN_STRETCH] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[AdvancedDataGridEvent.COLUMN_STRETCH] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(AdvancedDataGridEvent.COLUMN_STRETCH, FPRecorder.handleEvent);
 					}
@@ -258,16 +263,16 @@ package org.flex_pilot {
 			
 			
 			if(FPRecorder.typesAllowedObj[IndexChangedEvent.HEADER_SHIFT]){
-				var arr:Array = FPRecorder.typesAllowedObj[IndexChangedEvent.HEADER_SHIFT] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[IndexChangedEvent.HEADER_SHIFT] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(IndexChangedEvent.HEADER_SHIFT, FPRecorder.handleEvent);
 					}
 			}
 			
 			if(FPRecorder.typesAllowedObj[AdvancedDataGridEvent.HEADER_RELEASE]){
-				var arr:Array = FPRecorder.typesAllowedObj[AdvancedDataGridEvent.HEADER_RELEASE] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[AdvancedDataGridEvent.HEADER_RELEASE] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						
 						item.addEventListener(AdvancedDataGridEvent.HEADER_RELEASE, FPRecorder.handleEvent);
@@ -275,8 +280,8 @@ package org.flex_pilot {
 			}
 			
 			if(FPRecorder.typesAllowedObj[AdvancedDataGridEvent.ITEM_EDIT_END]){
-				var arr:Array = FPRecorder.typesAllowedObj[AdvancedDataGridEvent.ITEM_EDIT_END] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[AdvancedDataGridEvent.ITEM_EDIT_END] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(AdvancedDataGridEvent.ITEM_EDIT_END, FPRecorder.handleEvent);
 					}
@@ -294,16 +299,16 @@ package org.flex_pilot {
 			
 			
 			if(FPRecorder.typesAllowedObj[DragEvent.DRAG_START]){
-				var arr:Array = FPRecorder.typesAllowedObj[DragEvent.DRAG_START] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[DragEvent.DRAG_START] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(DragEvent.DRAG_START, FPRecorder.handleEvent);
 					}
 			}
 			
 			if(FPRecorder.typesAllowedObj[DragEvent.DRAG_DROP]){
-				var arr:Array = FPRecorder.typesAllowedObj[DragEvent.DRAG_DROP] as Array;
-				for(var i:Number=0 ; i<arr.length ; i++)
+				arr = FPRecorder.typesAllowedObj[DragEvent.DRAG_DROP] as Array;
+				for(i=0 ; i<arr.length ; i++)
 					if(item is arr[i]){
 						item.addEventListener(DragEvent.DRAG_DROP, FPRecorder.handleEvent);
 					}
@@ -350,25 +355,28 @@ package org.flex_pilot {
 	  
 	  
       var list:Array = FPRecorder.sliderItems;
-	  for each(var item:* in list){
+	  var item:*;
+	  
+	  var i:Number;
+	  for each(item in list){
 		  item.removeEventListener(SliderEvent.CHANGE , FPRecorder.handleEvent);
 	  }
 	  
 	  list = FPRecorder.dateItems;
-	  for each (var item:* in list) {
+	  for each (item in list) {
 		  
 		  item.removeEventListener(CalendarLayoutChangeEvent.CHANGE, FPRecorder.handleEvent);
 	  }
 	  
 	  list = FPRecorder.listItems;
-	  for each (var item:* in list) {
+	  for each (item in list) {
 		  item.removeEventListener(ListEvent.CHANGE, FPRecorder.handleEvent);
 	  }
 	  
 	  list=FPRecorder.dgItems;
 	  
-	  for(var i:Number = 0 ; i<list.length;i++){
-		  var item:*=list[i];
+	  for(i = 0 ; i<list.length;i++){
+		  item=list[i];
 		  item.removeEventListener(DataGridEvent.COLUMN_STRETCH , FPRecorder.handleEvent);
 		  item.removeEventListener(DataGridEvent.ITEM_EDIT_END , FPRecorder.handleEvent);
 		  item.removeEventListener(DataGridEvent.HEADER_RELEASE , FPRecorder.handleEvent);
@@ -376,8 +384,8 @@ package org.flex_pilot {
 	  }
 	  
 	  list=FPRecorder.adgItems;
-	  for(var i:Number = 0 ; i<list.length;i++){
-		  var item:*=list[i];
+	  for(i= 0 ; i<list.length;i++){
+		  item=list[i];
 		  item.removeEventListener(AdvancedDataGridEvent.ITEM_CLOSE , FPRecorder.handleEvent);
 		  item.removeEventListener(AdvancedDataGridEvent.ITEM_OPEN , FPRecorder.handleEvent);
 		  
@@ -385,8 +393,8 @@ package org.flex_pilot {
 	  }
 	  
 	  list=FPRecorder.adgBaseExItems;
-	  for(var i:Number = 0 ; i<list.length;i++){
-		  var item:*=list[i];
+	  for(i = 0 ; i<list.length;i++){
+		  item=list[i];
 		  item.removeEventListener(AdvancedDataGridEvent.COLUMN_STRETCH , FPRecorder.handleEvent);
 		  item.removeEventListener(IndexChangedEvent.HEADER_SHIFT , FPRecorder.handleEvent);
 		  item.removeEventListener(AdvancedDataGridEvent.HEADER_RELEASE , FPRecorder.handleEvent);
@@ -394,8 +402,8 @@ package org.flex_pilot {
 	  }
 	  
 	  list=FPRecorder.uicItems;
-	  for(var i:Number = 0 ; i<list.length;i++){
-		  var item:*=list[i];
+	  for(i = 0 ; i<list.length;i++){
+		  item=list[i];
 		  item.removeEventListener(DragEvent.DRAG_START , FPRecorder.handleEvent);
 		  item.removeEventListener(DragEvent.DRAG_DROP , FPRecorder.handleEvent);
 		  
@@ -404,11 +412,13 @@ package org.flex_pilot {
 	  
     }
 
-    public static function handleEvent(e:*){
+    public static function handleEvent(e:*):void{
 		
       var targ:* = e.target;
       var _this:* = FPRecorder;
       var chain:String = FPLocator.generateLocator(targ);
+	  
+	  var opts:Object;
 	  
       
 		switch (true) {
@@ -428,7 +438,7 @@ package org.flex_pilot {
 		
         // ComboBox changes
 		case (e is DataGridEvent && e.type==DataGridEvent.COLUMN_STRETCH ) :
-				var opts:Object=new Object;
+				opts=new Object;
 				opts.localX=Number(e.localX);
 				opts.columnIndex=e.columnIndex;
 				opts.rowIndex=e.rowIndex;
@@ -443,7 +453,7 @@ package org.flex_pilot {
 			
 			
 			//  storing some of the values from event and to remain on the safe side if event had been custom generated . . .
-				var opts:Object=new Object;
+				opts=new Object;
 				opts.columnIndex=e.columnIndex;
 				opts.dataField=e.dataField;
 				opts.rowIndex=e.rowIndex;
@@ -458,7 +468,7 @@ package org.flex_pilot {
 		
 			
 		case (e is DataGridEvent && e.type==DataGridEvent.ITEM_EDIT_END) :
-				var opts:Object=new Object;
+				opts=new Object;
 				opts.newValue=e.target.itemEditorInstance[e.target.columns[e.columnIndex].editorDataField];
 				
 				opts.dataField=e.dataField;
@@ -473,7 +483,7 @@ package org.flex_pilot {
 		
 		
 		case (e is AdvancedDataGridEvent &&  e.type==AdvancedDataGridEvent.ITEM_OPEN) :
-				var opts:Object = new Object;
+				opts = new Object;
 				opts.item=e.item;
 				opts.opening=true;
 				opts.bubbles=e.bubbles;
@@ -483,7 +493,7 @@ package org.flex_pilot {
 				break;
 		
 		case (e is AdvancedDataGridEvent && e.type==AdvancedDataGridEvent.ITEM_CLOSE) :
-				var opts:Object = new Object;
+				opts = new Object;
 				opts.item=e.item;
 				opts.opening=false;
 				opts.bubbles=e.bubbles;
@@ -493,7 +503,7 @@ package org.flex_pilot {
 				break;
 				
 		case (e is AdvancedDataGridEvent && e.type==AdvancedDataGridEvent.COLUMN_STRETCH) :
-			var opts:Object=new Object;
+			opts=new Object;
 			opts.bubbles=e.bubbles;
 			opts.cancelable=e.cancelable;
 			opts.localX=Number(e.localX);
@@ -505,7 +515,7 @@ package org.flex_pilot {
 			break;
 		
 		case (e is AdvancedDataGridEvent && e.type==AdvancedDataGridEvent.HEADER_RELEASE) :
-			var opts:Object = new Object;
+			opts = new Object;
 			opts.bubbles=e.bubbles;
 			opts.cancelable=e.cancelable;
 			opts.columnIndex = e.columnIndex;
@@ -516,7 +526,7 @@ package org.flex_pilot {
 			break;
 		
 		case (e is AdvancedDataGridEvent && e.type==AdvancedDataGridEvent.ITEM_EDIT_END) :
-			var opts:Object = new Object;
+			opts = new Object;
 			opts.bubbles=e.bubbles;
 			opts.cancelable=e.cancelable;
 			opts.columnIndex = e.columnIndex;
@@ -529,7 +539,7 @@ package org.flex_pilot {
 			break;
 		
 		case (e is IndexChangedEvent && e.type==IndexChangedEvent.HEADER_SHIFT) :
-			var opts:Object = new Object;
+			opts = new Object;
 			
 			opts.newIndex=e.newIndex;
 			opts.oldIndex=e.oldIndex;
@@ -541,7 +551,7 @@ package org.flex_pilot {
 		
 		case (e is DragEvent && e.type==DragEvent.DRAG_START) :
 			
-			var opts:Object={
+			opts={
 				bubbles : e.bubbles ,
 				cancelable : e.cancelable ,
 				action : e.action ,
@@ -564,7 +574,7 @@ package org.flex_pilot {
 		case (e is DragEvent && e.type==DragEvent.DRAG_DROP) :
 			
 			
-			var opts:Object={
+			opts={
 				bubbles : e.bubbles ,
 				cancelable : e.cancelable ,
 				action : e.action ,

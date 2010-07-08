@@ -56,15 +56,16 @@ package util
 			var srt:Sort=new Sort();
 			var oldSort:Sort=obj.dataProvider.sort;
 			var column:* = obj.columns[index];
+			var sf:SortField;
 			if(oldSort){
 				srt.fields=oldSort.fields;
-				var sf:SortField = new SortField(column.dataField  , caseSensitive , descending );
+				sf = new SortField(column.dataField  , caseSensitive , descending );
 				srt.fields.splice( 0 , 0 , sf);
 				
 			}
 			else{
 				
-				var sf:SortField = new SortField(column.dataField  , caseSensitive , descending );
+				sf = new SortField(column.dataField  , caseSensitive , descending );
 				
 				srt.fields=[sf];
 				

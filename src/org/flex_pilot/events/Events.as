@@ -374,7 +374,7 @@ package org.flex_pilot.events {
 		obj.dispatchEvent(ev);
 	}
 	
-	public static function triggerDragEvent(obj:* , type , ...args):void{
+	public static function triggerDragEvent(obj:* , type:* , ...args):void{
 	
 		var defaults:Array=[
 			['bubbles' , false] ,
