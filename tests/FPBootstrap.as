@@ -14,7 +14,7 @@ Copyright 2009, Matthew Eernisse (mde@fleegix.org) and Slide, Inc.
  limitations under the License.
 */
 
-package org.flex_pilot {
+package {
   import flash.display.Loader;
   import flash.net.URLRequest;
   import flash.events.Event;

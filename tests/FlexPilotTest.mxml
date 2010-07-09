@@ -7,7 +7,6 @@
 		<![CDATA[
 			import mx.events.FlexEvent;
 			
-			import org.flex_pilot.FPBootstrap;
 			
 			/*  Collapse : Expand Top Panel */
 			public function sizeTopPanel():void
@@ -30,8 +29,8 @@
 			{
 				
 				trace("intializing");
-				org.flex_pilot.FPBootstrap.flex_pilotLibPath='FlexPilot.swf';
-				org.flex_pilot.FPBootstrap.init(this);
+				FPBootstrap.flex_pilotLibPath='FlexPilot.swf';
+				FPBootstrap.init(this);
 			}
 			
 		]]>
