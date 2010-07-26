@@ -22,7 +22,7 @@ def accordion():
     os.system(cmd)
 
 def fptestapp():
-    cmd = MXMLC_PATH + ' -source-path=. -source-path+=../src -source-path+=./components -source-path+=./style -source-path+=./images ./FlexPilotTest.mxml -o ./FlexPilotTest.swf'
+    cmd = MXMLC_PATH + ' -source-path=. -source-path+=../src ./FlexPilotTest.mxml -o ./FlexPilotTest.swf'
     print cmd
     os.system(cmd)
 
