@@ -743,7 +743,7 @@ package org.flex_pilot {
       //FPLogger.log(e.target.toString());
     }
 
-    private static function resetRecentTarget(t:String, e:*):void  {
+    private static function resetRecentTarget(t:String, e:*):void {
       var _this:* = FPRecorder;
       // Remember this target, avoid multiple clicks on it
       _this.recentTarget[t] = e.target;
@@ -779,17 +779,14 @@ package org.flex_pilot {
     private static function generateAction(t:String, targ:*,
         opts:Object = null):void {
 		
-		var trybool:Boolean=false;
+		  var trybool:Boolean=false;
 			
       var chain:String;
       //Type actions send an already build locator string
       if (typeof(targ) == 'object'){
           chain = FPLocator.generateLocator(targ);
-		  
       }
       else { chain = targ; }
-	  
-	  
 
       //Figure out what kind of displayObj were dealing with
       var classInfo:XML = describeType(targ);
@@ -801,7 +798,6 @@ package org.flex_pilot {
         chain: chain
       };
       var params:Object = {};
-	  
 
       //if we have a flex accordion
       if (objType.indexOf('Accordion') != -1){
@@ -816,8 +812,8 @@ package org.flex_pilot {
       var p:String;
       for (p in opts) {
         params[p] = opts[p]
-			
       }
+      
       switch (t) {
         case 'click':
           break;
@@ -825,81 +821,62 @@ package org.flex_pilot {
           break;
         case 'select':
           var sel:* = targ.selectedItem;
-            
-		  var labelField:String;
-		  
-		FP::complete{ 
-		  if(targ is AdvancedDataGridBase || targ is DataGridBase){
-		  try{
-			  res.selectedItem=targ.dataProvider[targ.selectedIndex];
-		  }
-		  catch(e:Error){
-			  trace(e);
-		  }
-		  res.selectedIndex=targ.selectedIndex;  
-		  }
-		  else
-		  {
-			  
-			  labelField = targ.labelField ?
-				  targ.labelField : 'label';
-			  params.label = sel[labelField];
-		  }
-		  
-		}
+		      var labelField:String;
+    		  FP::complete{ 
+      		  if (targ is AdvancedDataGridBase || targ is DataGridBase) {
+      		    try{
+        			  res.selectedItem=targ.dataProvider[targ.selectedIndex];
+        		  }
+        		  catch(e:Error){
+        			  trace(e);
+        		  }
+        		  res.selectedIndex=targ.selectedIndex;  
+      		  }
+      		  else {
+      			  labelField = targ.labelField ?
+      				  targ.labelField : 'label';
+      			  params.label = sel[labelField];
+      		  }
+      		}
 		
-		if(!FP::complete)
-			if(targ is DataGridBase){
-				try{
-					res.selectedItem=targ.dataProvider[targ.selectedIndex];
-				}
-				catch(e:Error){
-					trace(e);
-				}
-				res.selectedIndex=targ.selectedIndex;  
-			}
-			else
-			{
-				
-				labelField = targ.labelField ?
-					targ.labelField : 'label';
-				params.label = sel[labelField];
-			}
-			
-			
+      		if (!FP::complete){
+      			if(targ is DataGridBase){
+      				try{
+      					res.selectedItem=targ.dataProvider[targ.selectedIndex];
+      				}
+      				catch(e:Error){
+      					trace(e);
+      				}
+      				res.selectedIndex=targ.selectedIndex;  
+      			}
+      			else {
+      				labelField = targ.labelField ?
+      					targ.labelField : 'label';
+      				params.label = sel[labelField];
+      			}
           break;
         case 'type':
           break;
-		case 'sliderChange':
-			params.value=targ.value;
-			break;
-		case 'dateChange':
-			params.value=targ.selectedDate.time;
+	    	case 'sliderChange':
+    			params.value=targ.value;
+    			break;
+    		case 'dateChange':
+    			params.value=targ.selectedDate.time;
 			
-			break;
-		case 'itemDragDrop' :
-			// storing the information about the start of drag . . .
-			res.start=draggerParams;
-			break;
+    			break;
+    		case 'itemDragDrop' :
+    			// storing the information about the start of drag . . .
+    			res.start=draggerParams;
+			  break;
 	
       }
 	  
-	  
-	  
-      for (p in params) {
-		  
+      for (p in params) {		  
         res.params = params;
-		
         break;
-      
 	  }
-
-	 
 	  
-	  
-
-	  
-	  if(t=='dragStart'){
+	  if (t=='dragStart') {
 		  
 		  //  draggerParams is set with the value representing the state during the start of drag 
 		  //  draggerParams will be used later with the dispatch of event DragEvent.DRAG_DROP
@@ -908,19 +885,12 @@ package org.flex_pilot {
 		  return;
 	  }
 	  
-	  if(t=='itemDragDrop'){
-		  
+	  if (t=='itemDragDrop') {
 		  trace("saved");
 		  test=res;
 	  }
-      
-	  
-	  
+
 	  var r:* = ExternalInterface.call('fp_recorderAction', res);
-	  
-	  
-	  
-	  
       if (!r) {
         FPLogger.log(res);
         FPLogger.log('(FlexPilot Flash bridge not found.)');
