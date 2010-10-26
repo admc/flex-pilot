@@ -403,8 +403,7 @@ package org.flex_pilot {
           _this.generateAction('itemDragDrop', targ , opts);      
           break;
         case (((e is ListEvent 
-        || e is IndexChangedEvent 
-        || e is eventMap[IndexChangedEvent])
+        || e is IndexChangedEvent)
         && ( targ is ComboBox 
           || targ is componentMap[ComboBox] 
           || targ is ListBase 
@@ -427,29 +426,29 @@ package org.flex_pilot {
           // If the last event was a keyDown, write out the string
           // that's been saved from the sequence of keyboard events
           if (_this.lastEventType == KeyboardEvent.KEY_DOWN) {
-          var locate:* = targ;
-          //If we have a prebuild last locator, use it
-          //Since the current isn't actually the node we want
-          //it's the following node that generated the onchange
-          if (_this.lastEventLocator) {
-            locate = _this.lastEventLocator;
-          }
-          _this.generateAction('type', locate, { text: _this.keyDownString });
-          // Empty out string storage
-          _this.keyDownString = '';
+            var locate:* = targ;
+            //If we have a prebuild last locator, use it
+            //Since the current isn't actually the node we want
+            //it's the following node that generated the onchange
+            if (_this.lastEventLocator) {
+              locate = _this.lastEventLocator;
+            }
+            _this.generateAction('type', locate, { text: _this.keyDownString });
+            // Empty out string storage
+            _this.keyDownString = '';
           }
           // Ignore clicks on ComboBox/List items that result
           // in ListEvent.CHANGE events -- the list gets blown
           // away, and can't be looked up by the generated locator
           // anyway, so we have to use this event instead
-          else if (_this.lastEventType == ListEvent.CHANGE) {
-          if (_this.recentTarget.change && (_this.recentTarget is List || targ is componentMap[List])) {
-            return;
-          }
-          else if (_this.recentTarget.sliderChange  && _this.recentTarget is Slider) {
-            return;
-          }
-        }
+          /*else if (_this.lastEventType == ListEvent.CHANGE) {
+            if (_this.recentTarget.change && (_this.recentTarget is List || targ is componentMap[List])) {
+              return;
+            }
+            else if (_this.recentTarget.sliderChange  && _this.recentTarget is Slider) {
+              return;
+            }
+          }*/
         
         // Avoid multiple clicks on the same target
         if (_this.recentTarget == e.target) {
@@ -601,11 +600,11 @@ package org.flex_pilot {
         test=res;
       }
 
-      var r:* = ExternalInterface.call('fp_recorderAction', res);
       if (t=='select'){
         test=res;
       }
-  
+      
+      var r:* = ExternalInterface.call('fp_recorderAction', res);
       if (!r) {
         FPLogger.log(res);
         FPLogger.log('(FlexPilot Flash bridge not found.)');
